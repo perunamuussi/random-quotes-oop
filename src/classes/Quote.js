@@ -5,6 +5,14 @@ export default class Quote {
     this.author = author;
   }
 
+  formatText() {
+    return `"${this.text}"`;
+  }
+
+  formatAuthor() {
+    return `© ${this.author}`;
+  }
+
   info() {
     return `Quote has id: ${this.id} and author is ${this.author}`;
   }
