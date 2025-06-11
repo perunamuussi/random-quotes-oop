@@ -3,30 +3,158 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Random Quotes</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-    <link rel="stylesheet" href="styles.css" />
+    <title>Физический Volume Setter</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0;
+        overflow: hidden;
+      }
+
+      .track {
+        width: 300px;
+        height: 20px;
+        background: #ddd;
+        border-radius: 10px;
+        position: relative;
+        transform-origin: center;
+        transform: rotate(0deg);
+        transition: transform 0.3s ease;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .ball {
+        width: 30px;
+        height: 30px;
+        background: #ff4757;
+        border-radius: 50%;
+        position: absolute;
+        top: -5px;
+        left: 135px;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transition: left 0.1s linear;
+      }
+
+      .volume-display {
+        margin-top: 30px;
+        text-align: center;
+        font-size: 24px;
+      }
+
+      .controls {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .tilt-control {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+    </style>
   </head>
   <body>
-    <div class="container">
-      <h1>Random Quotes</h1>
-      <div id="quote" class="quote">
-        <p id="quote-text" class="quote-text">
-          Click the button to get a random quote
-        </p>
-        <p id="quote-author" class="quote-author"></p>
-        <button id="random-quote-btn" class="btn btn-primary">
-          Get random quote
-        </button>
+    <div class="controls">
+      <div class="track" id="track">
+        <div class="ball" id="ball"></div>
+      </div>
+      <div class="tilt-control">
+        <button id="tiltLeft">Наклонить влево</button>
+        <button id="tiltRight">Наклонить вправо</button>
+      </div>
+      <div class="volume-display">
+        Громкость: <span id="volumeValue">50</span>%
       </div>
     </div>
 
-    <script type="module" src="index.js"></script>
+    <script>
+      const track = document.getElementById('track');
+      const ball = document.getElementById('ball');
+      const volumeValue = document.getElementById('volumeValue');
+      const tiltLeftBtn = document.getElementById('tiltLeft');
+      const tiltRightBtn = document.getElementById('tiltRight');
+
+      let currentAngle = 0;
+      let ballPosition = 135; // Начальная позиция шара (центр)
+      let isDragging = false;
+
+      // Физические параметры
+      const gravity = 0.2;
+      let velocity = 0;
+      const friction = 0.98;
+
+      // Обновление позиции шара с физикой
+      function updateBallPosition() {
+        // Рассчитываем ускорение от наклона
+        const acceleration = gravity * Math.sin((currentAngle * Math.PI) / 180);
+
+        // Обновляем скорость
+        velocity += acceleration;
+        velocity *= friction;
+
+        // Обновляем позицию
+        ballPosition += velocity;
+
+        // Ограничиваем позицию в пределах трека
+        ballPosition = Math.max(0, Math.min(270, ballPosition));
+
+        // Применяем новую позицию
+        ball.style.left = `${ballPosition}px`;
+
+        // Рассчитываем громкость (0-100%)
+        const volume = Math.round((ballPosition / 270) * 100);
+        volumeValue.textContent = volume;
+
+        // Рекурсивно продолжаем анимацию
+        requestAnimationFrame(updateBallPosition);
+      }
+
+      // Наклон трека
+      function tiltTrack(angle) {
+        currentAngle = angle;
+        track.style.transform = `rotate(${angle}deg)`;
+      }
+
+      // Обработчики кнопок
+      tiltLeftBtn.addEventListener('click', () => tiltTrack(-15));
+      tiltRightBtn.addEventListener('click', () => tiltTrack(15));
+
+      // Перетаскивание шара
+      ball.addEventListener('mousedown', () => {
+        isDragging = true;
+        velocity = 0; // Сбрасываем физику при перетаскивании
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+
+        const trackRect = track.getBoundingClientRect();
+        let newPosition = e.clientX - trackRect.left - 15;
+
+        // Ограничиваем позицию
+        newPosition = Math.max(0, Math.min(270, newPosition));
+        ballPosition = newPosition;
+        ball.style.left = `${ballPosition}px`;
+
+        // Обновляем громкость
+        const volume = Math.round((ballPosition / 270) * 100);
+        volumeValue.textContent = volume;
+      });
+
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+
+      // Запускаем физическую симуляцию
+      updateBallPosition();
+    </script>
   </body>
 </html>
