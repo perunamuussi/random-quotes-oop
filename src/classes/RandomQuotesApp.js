@@ -24,20 +24,20 @@ class RandomQuoteApp {
     }
   }
 
-  generateRandomQuote() {
+  randomQuoteHandler() {
     this.changeCurrentQuote(RandomQuote.getRandomQuote());
   }
 
-  async getRandomQuoteViaApi() {
+  async randomQuoteViaAPIHandler() {
     this.changeCurrentQuote(await RandomQuote.getRandomQuoteViaApi());
   }
 
   init() {
     this.randomQuoteBtn.addEventListener('click', () =>
-      this.generateRandomQuote()
+      this.randomQuoteHandler()
     );
     this.randomQuoteAPIBtn.addEventListener('click', () =>
-      this.getRandomQuoteViaApi()
+      this.randomQuoteViaAPIHandler()
     );
   }
 }

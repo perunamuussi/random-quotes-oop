@@ -32,6 +32,3 @@ class RandomQuote {
 }
 
 export default RandomQuote;
-
-лкулыа > +358442301938;
-kristina: +358405887120;
