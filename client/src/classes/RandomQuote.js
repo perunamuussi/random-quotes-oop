@@ -23,8 +23,12 @@ class RandomQuote {
       if (!response.ok) {
         throw new Error(response.status);
       }
-      const { id, quote: text, author } = await response.json();
-      return new Quote(id, text, author);
+      if (typeof response === 'object') {
+        const { id, quote: text, author } = await response.json();
+        if (id && text && author) {
+          return new Quote(id, text, author);
+        }
+      }
     } catch (err) {
       console.error(err);
     }
