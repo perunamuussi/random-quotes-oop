@@ -5,7 +5,7 @@ body {
 }
 
 .container {
-  max-width: 600px;
+  max-width: 700px;
   margin: 20px auto;
   text-align: center;
 }
@@ -17,7 +17,7 @@ body {
   border: none;
   cursor: pointer;
   border-radius: 10px;
-  margin: 0 10px;
+  margin: 10px;
 }
 
 .btn-primary {
@@ -34,6 +34,16 @@ body {
 
 .btn-secondary:hover {
   background-color: #218838;
+}
+
+.btn-ternary {
+  background-color: #6f42c1; /* Purple shade */
+  color: white;
+}
+
+.btn-ternary:hover {
+  background-color: #5936a2; /* Darker purple on hover */
+  color: white;
 }
 
 .btn-danger {
