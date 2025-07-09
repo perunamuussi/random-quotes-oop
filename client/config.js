@@ -3,4 +3,4 @@ const config = {
   LOCAL_API_URL: 'https://random-quotes-oop-28ec.onrender.com',
 };
 
-export default config;
+export { config };
